@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -28,9 +27,30 @@ class MainActivity : AppCompatActivity() {
         }
         var button3 = findViewById<Button>(R.id.btn3)
         button3.setOnClickListener {
-            openWhatsapp()
+
+        when {
+            isAppInstalled("com.whatsapp") -> {
+                openWhatsApp()
+            }
+            isAppInstalled("com.whatsapp.w4b") -> {
+                launchWhatsAppBusinessApp()
+            }
+            else -> {
+                openWhatsappWeb()
+            }
+        }
         }
 
+    }
+
+
+    private fun isAppInstalled(packageName: String): Boolean {
+        return try {
+            packageManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
+            true
+        } catch (ignored: PackageManager.NameNotFoundException) {
+            false
+        }
     }
     fun openWhatsApp() {
         val pm = packageManager
@@ -56,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun openWhatsapp() {
+    fun openWhatsappWeb() {
         val message: String = "mMessOpenWhatEdit.getText().toString() "// take message from the user
 
         // create an Intent to send data to the whatsapp
